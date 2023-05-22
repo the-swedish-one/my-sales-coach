@@ -15,14 +15,14 @@ function App() {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I am ChatGPT! I'm interested in buying a pen.",
+      message: "Hello, I am ChatGPT!",
       sender: "ChatGPT",
     },
   ]);
 
   return (
     <div>
-      <div style={{ position: "relative", height: "800px", width: "700px" }}>
+      <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
             <MessageList>
