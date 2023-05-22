@@ -106,6 +106,7 @@ function App() {
         <MainContainer>
           <ChatContainer>
             <MessageList
+              scrollBehavior="smooth"
               typingIndicator={
                 typing ? <TypingIndicator content="ChatGPT is typing" /> : null
               }
