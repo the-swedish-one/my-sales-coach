@@ -22,6 +22,7 @@ function App() {
       sender: "ChatGPT",
     },
   ]);
+  const [systemMessageContent, setSystemMessageContent] = useState("");
 
   async function handleSend(message) {
     const newMessage = {
@@ -62,11 +63,10 @@ function App() {
     // "assistant" -> a response from chatGPT
     // "system" -> generally one initial message defining HOW we want chatGPT to talk
 
-    // So we can set the system message in order to prime chatGPT with a scenario or persona. Will make this a varibale later so we can pass in different scenarios for the user!
+    // So we can set the system message in order to prime chatGPT with a scenario or persona. Will make this a varibale so we can pass in different scenarios for the user!
     const systemMessage = {
       role: "system",
-      content:
-        "Respond to me like you want to buy a pen and I am the sales person, but you are also in a rush and don't have much time to speak to me", // Other examples: Explain all concepts like I am 10 years old // Speak like a pirate // Explain to me like I am a software engineer with 10 years experience
+      content: systemMessageContent, // examples: Explain all concepts like I am 10 years old // Speak like a pirate // Explain to me like I am a software engineer with 10 years experience
     };
 
     const apiRequestBody = {
