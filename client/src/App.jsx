@@ -37,6 +37,25 @@ function App() {
 
     // set a typing indicator (e.g. ChatGPT is typing)
     setTyping(true);
+
+    await processMessageToChatGPT(newMessages);
+  }
+
+  async function processMessageToChatGPT(chatMessages) {
+    // Our chat messages object needs to be translated into the format that the chatGPT api will understand:
+    // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
+    // but apiMessages needs to look like this { role: "user" or "assistant", content: "The message content here"}
+
+    let apiMessages = chatMessages.map((messageObject) => {
+      // mapping through each chatMessage object and creating a new object to match the object the api is expecting
+      let role = "";
+      if (messageObject.sender === "ChatGPT") {
+        role = "assistant";
+      } else {
+        role = "user";
+      }
+      return { role: role, content: messageObject.message };
+    });
   }
 
   return (
