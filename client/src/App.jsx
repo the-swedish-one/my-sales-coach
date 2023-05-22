@@ -103,6 +103,9 @@ function App() {
 
   return (
     <div>
+      <h1>My Sales Coach</h1>
+      <h3>Pick a scenario you want to practice</h3>
+      <button>Sell a pen</button>
       <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
