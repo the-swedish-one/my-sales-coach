@@ -25,7 +25,12 @@ function App() {
       <div style={{ position: "relative", height: "800px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
-            <MessageList></MessageList>
+            <MessageList>
+              {messages.map((message, i) => {
+                // give each message in the array a message componenet
+                return <Message key={i} model={message} />; // returns imported component message, model (the message it's looking for) is our current message
+              })}
+            </MessageList>
             <MessageInput />
           </ChatContainer>
         </MainContainer>
