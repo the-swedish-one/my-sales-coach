@@ -108,11 +108,18 @@ function App() {
     // console.log(systemMessageContent);
   }
 
+  function prospectToTheCEO() {
+    setSystemMessageContent(
+      "Respond to me like you are the CEO of a major tech company and I am reaching out to you without any previous communication."
+    );
+  }
+
   return (
     <div>
       <h1>My Sales Coach</h1>
       <h3>Pick a scenario you want to practice</h3>
       <button onClick={sellAPen}>Sell a pen</button>
+      <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
       <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
