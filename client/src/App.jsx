@@ -20,6 +20,19 @@ function App() {
     },
   ]);
 
+  async function handleSend(message) {
+    const newMessage = {
+      message: message, // this is the text we're getting from the sender
+      sender: "user",
+      direction: "outgoing", // when using this library this makes the message show on the right side of the chat window
+    };
+
+    const newMessages = [...messages, newMessage]; // create a new array with all the old messages, + the new message
+
+    // update messages state
+    setMessages(newMessages);
+  }
+
   return (
     <div>
       <div style={{ position: "relative", height: "600px", width: "700px" }}>
@@ -31,7 +44,10 @@ function App() {
                 return <Message key={i} model={message} />; // returns imported component message, model (the message it's looking for) is our current message
               })}
             </MessageList>
-            <MessageInput />
+            <MessageInput
+              placeholder="Type your message here"
+              onSend={handleSend}
+            />
           </ChatContainer>
         </MainContainer>
       </div>
