@@ -11,6 +11,9 @@ import {
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
 
+// using the free api key here
+const API_KEY = "";
+
 function App() {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState([
