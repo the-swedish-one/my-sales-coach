@@ -31,6 +31,9 @@ function App() {
 
     // update messages state
     setMessages(newMessages);
+
+    // set a typing indicator (e.g. ChatGPT is typing)
+    setTyping(true);
   }
 
   return (
@@ -38,7 +41,11 @@ function App() {
       <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
-            <MessageList>
+            <MessageList
+              typingIndicator={
+                typing ? <TypingIndicator content="ChatGPT is typing" /> : null
+              }
+            >
               {messages.map((message, i) => {
                 // give each message in the array a message componenet
                 return <Message key={i} model={message} />; // returns imported component message, model (the message it's looking for) is our current message
