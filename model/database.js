@@ -10,19 +10,20 @@ const con = mysql.createConnection({
   host: DB_HOST || "127.0.0.1",
   user: DB_USER || "root",
   password: DB_PASS,
-  database: DB_NAME || "facebook",
-  multipleStatements: true
+  database: DB_NAME || "my-sales-coach",
+  multipleStatements: true,
 });
 
-con.connect(function(err) {
+con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 
+  // UPDATE THE table name here!!
   let sql =
-    "DROP TABLE if exists students; CREATE TABLE students(id INT NOT NULL AUTO_INCREMENT, firstname VARCHAR(40) not null, lastname VARCHAR(40) not null, PRIMARY KEY (id));";
-  con.query(sql, function(err, result) {
+    "DROP TABLE if exists XXXX; CREATE TABLE XXXXX(id INT NOT NULL AUTO_INCREMENT, firstname VARCHAR(40) not null, lastname VARCHAR(40) not null, PRIMARY KEY (id));";
+  con.query(sql, function (err, result) {
     if (err) throw err;
-    console.log("Table creation `students` was successful!");
+    console.log("Table creation `XXXXX` was successful!");
 
     console.log("Closing...");
   });
