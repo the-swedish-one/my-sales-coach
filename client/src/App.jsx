@@ -98,6 +98,7 @@ function App() {
         sender: "ChatGPT",
       },
     ]);
+    setTyping(false); // make the typing dots go away now that chatGPT has responded
   }
 
   return (
