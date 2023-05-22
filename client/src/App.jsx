@@ -101,11 +101,18 @@ function App() {
     setTyping(false); // make the typing dots go away now that chatGPT has responded
   }
 
+  function sellAPen() {
+    setSystemMessageContent(
+      "Respond to me like you want to buy a pen from me. Agree to the sale only once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell but don't prompt me with your needs or which pen you would like to."
+    );
+    // console.log(systemMessageContent);
+  }
+
   return (
     <div>
       <h1>My Sales Coach</h1>
       <h3>Pick a scenario you want to practice</h3>
-      <button>Sell a pen</button>
+      <button onClick={sellAPen}>Sell a pen</button>
       <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
