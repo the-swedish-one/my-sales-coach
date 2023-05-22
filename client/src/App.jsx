@@ -57,9 +57,22 @@ function App() {
       return { role: role, content: messageObject.message };
     });
 
+    // There are 3 types of roles possible:
+    // "user" -> a message from the user
+    // "assistant" -> a response from chatGPT
+    // "system" -> generally one initial message defining HOW we want chatGPT to talk
+
+    // So we can set the system message in order to prime chatGPT with a scenario or persona. Will make this a varibale later so we can pass in different scenarios for the user!
+    const systemMessage = {
+      role: "system",
+      content:
+        "Respond to me like you want to buy a pen and I am the sales person, but you are also in a rush and don't have much time to speak to me", // Other examples: Explain all concepts like I am 10 years old // Speak like a pirate // Explain to me like I am a software engineer with 10 years experience
+    };
+
     const apiRequestBody = {
       model: "gpt-3.5-turbo",
       messages: [
+        systemMessage, // this has to be here in order to prime chatGPT with the system message that we defined above before any other messages are sent over. This makes it respond to you according to that system message.
         ...apiMessages, // these are the chat messages formatted for api [message1,message2,message3,etc]
       ],
     };
