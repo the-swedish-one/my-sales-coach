@@ -13,9 +13,16 @@ import {
 
 function App() {
   return (
-    <>
-      <div></div>
-    </>
+    <div>
+      <div style={{ position: "relative", height: "800px", width: "700px" }}>
+        <MainContainer>
+          <ChatContainer>
+            <MessageList></MessageList>
+            <MessageInput />
+          </ChatContainer>
+        </MainContainer>
+      </div>
+    </div>
   );
 }
 
