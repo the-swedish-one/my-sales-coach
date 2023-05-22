@@ -12,7 +12,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 
 // using the free api key here
-const API_KEY = "";
+const API_KEY = "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";
 
 function App() {
   const [typing, setTyping] = useState(false);
@@ -56,6 +56,35 @@ function App() {
       }
       return { role: role, content: messageObject.message };
     });
+
+    const apiRequestBody = {
+      model: "gpt-3.5-turbo",
+      messages: [
+        ...apiMessages, // these are the chat messages formatted for api [message1,message2,message3,etc]
+      ],
+    };
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(apiRequestBody), // varibale created above this function
+    });
+
+    const data = await response.json();
+
+    // console.log(data);
+    // console.log(data.choices[0].message.content); // This is chatGPT's message back!
+
+    setMessages([
+      ...chatMessages,
+      {
+        message: data.choices[0].message.content,
+        sender: "ChatGPT",
+      },
+    ]);
   }
 
   return (
