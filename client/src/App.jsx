@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
@@ -10,6 +10,10 @@ import {
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
 import { Routes, Route, Link } from "react-router-dom";
+import "regenerator-runtime";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 import Home from "./pages/Home";
 import About from "./pages/About";
 
@@ -25,6 +29,16 @@ function App() {
     },
   ]);
   const [systemMessageContent, setSystemMessageContent] = useState("");
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
 
   async function handleSend(message) {
     const newMessage = {
@@ -103,6 +117,8 @@ function App() {
     setTyping(false); // make the typing dots go away now that chatGPT has responded
   }
 
+  // buttons for scenarios:
+
   function sellAPen() {
     setSystemMessageContent(
       "Respond to me like you want to buy a pen from me. Agree to the sale only once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell but don't prompt me with your needs or which pen you would like to."
@@ -146,6 +162,14 @@ function App() {
             />
           </ChatContainer>
         </MainContainer>
+      </div>
+
+      <div>
+        <p>Microphone: {listening ? "on" : "off"}</p>
+        <button onClick={SpeechRecognition.startListening}>Start</button>
+        <button onClick={SpeechRecognition.stopListening}>Stop</button>
+        <button onClick={resetTranscript}>Reset</button>
+        <p>{transcript}</p>
       </div>
 
       <Routes>
