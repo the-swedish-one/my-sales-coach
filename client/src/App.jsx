@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import "./App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
@@ -10,6 +9,9 @@ import {
   MessageInput,
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
+import { Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
 
 // using the free api key here
 const API_KEY = "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";
@@ -18,7 +20,7 @@ function App() {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState([
     {
-      message: "Hello, I am ChatGPT!",
+      message: "Hi there!",
       sender: "ChatGPT",
     },
   ]);
@@ -116,6 +118,10 @@ function App() {
 
   return (
     <div>
+      <div>
+        <Link to="/">Home</Link>
+        <Link to="/about">About</Link>
+      </div>
       <h1>My Sales Coach</h1>
       <h3>Pick a scenario you want to practice</h3>
       <button onClick={sellAPen}>Sell a pen</button>
@@ -141,6 +147,11 @@ function App() {
           </ChatContainer>
         </MainContainer>
       </div>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
     </div>
   );
 }
