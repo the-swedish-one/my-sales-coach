@@ -22,6 +22,7 @@ const API_KEY = "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";
 
 function App() {
   const [typing, setTyping] = useState(false);
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     {
       message: "Hi there!",
@@ -40,7 +41,15 @@ function App() {
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
-  async function handleSend(message) {
+  function handleInputChange(event) {
+    if (transcript) {
+      setMessage(transcript);
+    } else {
+      setMessage(event.target.value);
+    }
+  }
+
+  async function handleSend() {
     const newMessage = {
       message: message, // this is the text we're getting from the sender
       sender: "user",
@@ -142,7 +151,41 @@ function App() {
       <h3>Pick a scenario you want to practice</h3>
       <button onClick={sellAPen}>Sell a pen</button>
       <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
-      <div style={{ position: "relative", height: "600px", width: "700px" }}>
+
+      <div>
+        <MessageList
+          scrollBehavior="smooth"
+          typingIndicator={
+            typing ? <TypingIndicator content="ChatGPT is typing" /> : null
+          }
+        >
+          {messages.map((message, i) => {
+            // give each message in the array a message componenet
+            return <Message key={i} model={message} />; // returns imported component message, model (the message it's looking for) is our current message
+          })}
+        </MessageList>
+      </div>
+
+      <textarea
+        style={{ height: "50px", width: "300px" }}
+        placeholder="Type your message here or use the buttons below to record your voice!"
+        onChange={handleInputChange}
+      />
+
+      <div>
+        <p>Microphone: {listening ? "on" : "off"}</p>
+        <button onClick={SpeechRecognition.startListening}>
+          Start recording
+        </button>
+        <button onClick={SpeechRecognition.stopListening}>
+          Stop recording
+        </button>
+        <button onClick={resetTranscript}>Reset recording</button>
+        <button onClick={handleSend}>Send!</button>
+        <p>{transcript}</p>
+      </div>
+
+      {/* <div style={{ position: "relative", height: "600px", width: "700px" }}>
         <MainContainer>
           <ChatContainer>
             <MessageList
@@ -159,18 +202,11 @@ function App() {
             <MessageInput
               placeholder="Type your message here"
               onSend={handleSend}
+              value={transcript}
             />
           </ChatContainer>
         </MainContainer>
-      </div>
-
-      <div>
-        <p>Microphone: {listening ? "on" : "off"}</p>
-        <button onClick={SpeechRecognition.startListening}>Start</button>
-        <button onClick={SpeechRecognition.stopListening}>Stop</button>
-        <button onClick={resetTranscript}>Reset</button>
-        <p>{transcript}</p>
-      </div>
+      </div> */}
 
       <Routes>
         <Route path="/" element={<Home />} />
