@@ -14,11 +14,13 @@ import "regenerator-runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { useSpeechSynthesis } from "react-speech-kit";
 import Home from "./pages/Home";
 import About from "./pages/About";
 
-// using the free api key here
-const API_KEY = "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";
+// import the api key here
+// const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
+const googleAPI = import.meta.env.VITE_GOOGLE_API_KEY;
 
 function App() {
   const [typing, setTyping] = useState(false);
@@ -36,6 +38,7 @@ function App() {
     resetTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
+  const { speak } = useSpeechSynthesis();
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -50,6 +53,8 @@ function App() {
   }
 
   async function handleSend() {
+    console.log(import.meta.env.VITE_CHAT_GPT_API_KEY);
+
     const newMessage = {
       message: message, // this is the text we're getting from the sender
       sender: "user",
@@ -65,6 +70,8 @@ function App() {
     setTyping(true);
 
     await processMessageToChatGPT(newMessages);
+
+    setMessage("");
   }
 
   async function processMessageToChatGPT(chatMessages) {
@@ -105,7 +112,7 @@ function App() {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + API_KEY,
+        Authorization: "Bearer " + chatGptAPI,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(apiRequestBody), // varibale created above this function
@@ -113,8 +120,8 @@ function App() {
 
     const data = await response.json();
 
-    // console.log(data);
-    // console.log(data.choices[0].message.content); // This is chatGPT's message back!
+    console.log(data);
+    console.log(data.choices[0].message.content); // This is chatGPT's message back!
 
     setMessages([
       ...chatMessages,
@@ -127,7 +134,6 @@ function App() {
   }
 
   // buttons for scenarios:
-
   function sellAPen() {
     setSystemMessageContent(
       "Respond to me like you want to buy a pen from me. Agree to the sale only once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell but don't prompt me with your needs or which pen you would like to."
@@ -161,7 +167,7 @@ function App() {
         >
           {messages.map((message, i) => {
             // give each message in the array a message componenet
-            return <Message key={i} model={message} />; // returns imported component message, model (the message it's looking for) is our current message
+            return <Message key={i} model={message} />; // returns imported component Message, model (the message it's looking for) is our current message
           })}
         </MessageList>
       </div>
@@ -170,6 +176,7 @@ function App() {
         style={{ height: "50px", width: "300px" }}
         placeholder="Type your message here or use the buttons below to record your voice!"
         onChange={handleInputChange}
+        value={message}
       />
 
       <div>
