@@ -277,6 +277,15 @@ function App() {
       <p>Microphone: {listening ? "on" : "off"}</p>
       <button onClick={handleSend}>Send!</button>
 
+      {/* Button to clear the message history so you can start a new chat */}
+      <button
+        onClick={() =>
+          setMessages([{ message: "Hi there!", sender: "ChatGPT" }])
+        }
+      >
+        New chat
+      </button>
+
       {/* div containing commented out code for chatgpt components */}
       <div>
         {/* <div style={{ position: "relative", height: "400px", width: "500px" }}>
