@@ -17,6 +17,7 @@ import SpeechRecognition, {
 // import { useSpeechSynthesis } from "react-speech-kit";
 import Home from "./pages/Home";
 import About from "./pages/About";
+// import { convertTestToMp3 } from "my-sales-coach/routes/index.js";
 
 // import the api key here
 const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
@@ -40,13 +41,6 @@ function App() {
 
   // declaring a varible and assigning the value of the react useSpeechSynthesis hook
   // const { speak } = useSpeechSynthesis();
-
-  // import the Google Cloud client library and other required libraries:
-  // const textToSpeech = require("@google-cloud/text-to-speech");
-  // const fs = require("fs");
-  // const util = require("util");
-  // creates a new client for the google cloud library
-  // const client = new textToSpeech.TextToSpeechClient();
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -141,34 +135,18 @@ function App() {
     // console.log(data);
     // console.log(data.choices[0].message.content); // This is chatGPT's message back!
 
-    const audioResponse = await fetch(
-      "https://texttospeech.googleapis.com/v1/text:synthesize",
-      {
-        headers: {
-          Authorization: "Bearer " + googleAPI,
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        data: {
-          input: {
-            text: data.choices[0].message.content,
-          },
-        },
-        voice: {
-          languageCode: "en-gb",
-          name: "en-GB-Wavenet-A",
-          ssmlGender: "FEMALE",
-        },
-        audioConfig: {
-          audioEncoding: "MP3",
-        },
-        mode: "no-cors",
-      }
-    );
+    const audioResponse = await fetch("/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: data.choices[0].message.content }),
+    });
 
     setMessages([
       ...chatMessages,
       {
-        message: audioResponse,
+        message: data.choices[0].message.content,
 
         sender: "ChatGPT",
       },
@@ -203,13 +181,11 @@ function App() {
 
       <div>
         <p>Microphone: {listening ? "on" : "off"}</p>
-        <button onClick={SpeechRecognition.startListening}>
-          Start recording
-        </button>
-        <button onClick={SpeechRecognition.stopListening}>
+        <button onClick={SpeechRecognition.startListening}>Record</button>
+        {/* <button onClick={SpeechRecognition.stopListening}>
           Stop recording
-        </button>
-        <button onClick={resetTranscript}>Reset recording</button>
+        </button> */}
+        {/* <button onClick={resetTranscript}>Reset recording</button> */}
         <button onClick={handleSend}>Send!</button>
         <p>{transcript}</p>
       </div>
@@ -238,6 +214,8 @@ function App() {
         onChange={handleInputChange}
         value={message || transcript}
       />
+
+      {/* <img src="https://www.flaticon.com/free-icons/microphone" /> */}
 
       {/* <div style={{ position: "relative", height: "400px", width: "500px" }}>
         <MainContainer>
