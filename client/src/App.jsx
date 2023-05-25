@@ -76,10 +76,11 @@ function App() {
     // set a typing indicator (e.g. ChatGPT is typing)
     setTyping(true);
 
-    await processMessageToChatGPT(newMessages);
-
+    // clear textarea
     resetTranscript();
     setMessage("");
+
+    await processMessageToChatGPT(newMessages);
   }
 
   async function processMessageToChatGPT(chatMessages) {
