@@ -14,7 +14,7 @@ import "regenerator-runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { useSpeechSynthesis } from "react-speech-kit";
+// import { useSpeechSynthesis } from "react-speech-kit";
 import Home from "./pages/Home";
 import About from "./pages/About";
 
@@ -26,24 +26,33 @@ function App() {
   const [typing, setTyping] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
-    {
-      message: "Hi there!",
-      sender: "ChatGPT",
-    },
-  ]);
-  const [systemMessageContent, setSystemMessageContent] = useState("");
+    { message: "Hi there!", sender: "ChatGPT" },
+  ]); // initial message in the chat window
+  const [systemMessageContent, setSystemMessageContent] = useState(""); // system message varibale for chatGPT priming
+
+  // import the react speach recognition hook
   const {
     transcript,
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
-  const { speak } = useSpeechSynthesis();
+
+  // declaring a varible and assigning the value of the react useSpeechSynthesis hook
+  // const { speak } = useSpeechSynthesis();
+
+  // import the Google Cloud client library and other required libraries:
+  // const textToSpeech = require("@google-cloud/text-to-speech");
+  // const fs = require("fs");
+  // const util = require("util");
+  // creates a new client for the google cloud library
+  // const client = new textToSpeech.TextToSpeechClient();
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
+  // Managing the input field taking both text and voice-to-text with this useEffect and handleinputchange
   useEffect(() => {
     handleInputChange();
   }, [transcript]);
@@ -129,13 +138,38 @@ function App() {
 
     const data = await response.json();
 
-    console.log(data);
-    console.log(data.choices[0].message.content); // This is chatGPT's message back!
+    // console.log(data);
+    // console.log(data.choices[0].message.content); // This is chatGPT's message back!
+
+    const audioResponse = await fetch(
+      "https://texttospeech.googleapis.com/v1/text:synthesize",
+      {
+        headers: {
+          Authorization: "Bearer " + googleAPI,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        data: {
+          input: {
+            text: data.choices[0].message.content,
+          },
+        },
+        voice: {
+          languageCode: "en-gb",
+          name: "en-GB-Wavenet-A",
+          ssmlGender: "FEMALE",
+        },
+        audioConfig: {
+          audioEncoding: "MP3",
+        },
+        mode: "no-cors",
+      }
+    );
 
     setMessages([
       ...chatMessages,
       {
-        message: data.choices[0].message.content,
+        message: audioResponse,
+
         sender: "ChatGPT",
       },
     ]);
@@ -182,6 +216,7 @@ function App() {
 
       <div>
         <MessageList
+          style={{ height: "200px", width: "500px" }}
           scrollBehavior="smooth"
           typingIndicator={
             typing ? <TypingIndicator content="ChatGPT is typing" /> : null
@@ -193,6 +228,9 @@ function App() {
           })}
         </MessageList>
       </div>
+
+      {/* button speaking text using the react useSpeechSynthesis hook */}
+      {/* <button onClick={() => speak({ text: "Hello" })}>Play Message</button> */}
 
       <textarea
         style={{ height: "100px", width: "500px" }}
