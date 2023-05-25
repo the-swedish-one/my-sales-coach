@@ -7,6 +7,7 @@
     "migrate": "node model/database.js"
   },
   "dependencies": {
+    "@google-cloud/text-to-speech": "^4.2.2",
     "axios": "^1.4.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
