@@ -19,7 +19,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 
 // import the api key here
-// const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
+const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
 const googleAPI = import.meta.env.VITE_GOOGLE_API_KEY;
 
 function App() {
@@ -44,19 +44,26 @@ function App() {
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
+  useEffect(() => {
+    handleInputChange();
+  }, [transcript]);
+
   function handleInputChange(event) {
-    if (transcript) {
+    // console.log(transcript);
+    if (!transcript === "" && event) {
+      setMessage(event.target.value);
+    } else if (!transcript === "") {
       setMessage(transcript);
     } else {
-      setMessage(event.target.value);
+      setMessage(event?.target.value);
     }
   }
 
   async function handleSend() {
-    console.log(import.meta.env.VITE_CHAT_GPT_API_KEY);
+    // console.log(import.meta.env.VITE_CHAT_GPT_API_KEY);
 
     const newMessage = {
-      message: message, // this is the text we're getting from the sender
+      message: message || transcript, // this is the text we're getting from the sender
       sender: "user",
       direction: "outgoing", // when using this library this makes the message show on the right side of the chat window
     };
@@ -71,6 +78,7 @@ function App() {
 
     await processMessageToChatGPT(newMessages);
 
+    resetTranscript();
     setMessage("");
   }
 
@@ -159,6 +167,19 @@ function App() {
       <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
 
       <div>
+        <p>Microphone: {listening ? "on" : "off"}</p>
+        <button onClick={SpeechRecognition.startListening}>
+          Start recording
+        </button>
+        <button onClick={SpeechRecognition.stopListening}>
+          Stop recording
+        </button>
+        <button onClick={resetTranscript}>Reset recording</button>
+        <button onClick={handleSend}>Send!</button>
+        <p>{transcript}</p>
+      </div>
+
+      <div>
         <MessageList
           scrollBehavior="smooth"
           typingIndicator={
@@ -173,26 +194,13 @@ function App() {
       </div>
 
       <textarea
-        style={{ height: "50px", width: "300px" }}
-        placeholder="Type your message here or use the buttons below to record your voice!"
+        style={{ height: "100px", width: "500px" }}
+        placeholder="Type your message here or use the buttons to record your voice!"
         onChange={handleInputChange}
-        value={message}
+        value={message || transcript}
       />
 
-      <div>
-        <p>Microphone: {listening ? "on" : "off"}</p>
-        <button onClick={SpeechRecognition.startListening}>
-          Start recording
-        </button>
-        <button onClick={SpeechRecognition.stopListening}>
-          Stop recording
-        </button>
-        <button onClick={resetTranscript}>Reset recording</button>
-        <button onClick={handleSend}>Send!</button>
-        <p>{transcript}</p>
-      </div>
-
-      {/* <div style={{ position: "relative", height: "600px", width: "700px" }}>
+      {/* <div style={{ position: "relative", height: "400px", width: "500px" }}>
         <MainContainer>
           <ChatContainer>
             <MessageList
