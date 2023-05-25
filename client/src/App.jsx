@@ -180,14 +180,13 @@ function App() {
       <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
 
       <div>
-        <p>Microphone: {listening ? "on" : "off"}</p>
-        <button onClick={SpeechRecognition.startListening}>Record</button>
+        {/* <button onClick={SpeechRecognition.startListening}>Record</button> */}
         {/* <button onClick={SpeechRecognition.stopListening}>
           Stop recording
         </button> */}
         {/* <button onClick={resetTranscript}>Reset recording</button> */}
-        <button onClick={handleSend}>Send!</button>
-        <p>{transcript}</p>
+
+        {/* <p>{transcript}</p> */}
       </div>
 
       <div>
@@ -214,8 +213,18 @@ function App() {
         onChange={handleInputChange}
         value={message || transcript}
       />
-
-      {/* <img src="https://www.flaticon.com/free-icons/microphone" /> */}
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
+          style={{ height: "50px" }}
+          onClick={SpeechRecognition.startListening}
+        >
+          <path d="M192 0C139 0 96 43 96 96V256c0 53 43 96 96 96s96-43 96-96V96c0-53-43-96-96-96zM64 216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 89.1 66.2 162.7 152 174.4V464H120c-13.3 0-24 10.7-24 24s10.7 24 24 24h72 72c13.3 0 24-10.7 24-24s-10.7-24-24-24H216V430.4c85.8-11.7 152-85.3 152-174.4V216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 70.7-57.3 128-128 128s-128-57.3-128-128V216z" />
+        </svg>
+        <p>Microphone: {listening ? "on" : "off"}</p>
+        <button onClick={handleSend}>Send!</button>
+      </div>
 
       {/* <div style={{ position: "relative", height: "400px", width: "500px" }}>
         <MainContainer>
