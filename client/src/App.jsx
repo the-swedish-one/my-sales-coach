@@ -214,8 +214,10 @@ function App() {
             <div
               key={i}
               className={
-                "flex flex-col" +
-                (message.sender === "user" && "flex items-end")
+                "block" +
+                (message.sender === "user"
+                  ? "flex items-end"
+                  : "flex items-start")
               }
             >
               {/* Messages */}
@@ -224,7 +226,7 @@ function App() {
                 <audio src={message.audioURL} controls />
               ) : null}
             </div>
-          ); // returns imported component Message, model (the message it's looking for) is our current message
+          );
         })}
       </div>
 
@@ -241,8 +243,8 @@ function App() {
       <div>
         {listening ? (
           <svg
+            className="h-10 cursor-pointer"
             onClick={SpeechRecognition.stopListening}
-            style={{ height: "50px", cursor: "pointer" }}
             xmlns="http://www.w3.org/2000/svg"
             width="1080"
             zoomAndPan="magnify"
@@ -262,8 +264,8 @@ function App() {
           </svg>
         ) : (
           <svg
+            className="h-10 cursor-pointer"
             onClick={SpeechRecognition.startListening}
-            style={{ height: "50px" }}
             xmlns="http://www.w3.org/2000/svg"
             width="1080"
             zoomAndPan="magnify"
@@ -283,8 +285,8 @@ function App() {
           </svg>
         )}
       </div>
-      <p>{listening ? "Recording" : " "}</p>
-      <button onClick={handleSend} className="text-center">
+      <p className="text-xs">{listening ? "Recording" : " "}</p>
+      <button onClick={handleSend} className="text-center flex justify-center">
         Send!
       </button>
 
@@ -293,6 +295,7 @@ function App() {
         onClick={() =>
           setMessages([{ message: "Hi there!", sender: "ChatGPT" }])
         }
+        className="mb-10"
       >
         New chat
       </button>
