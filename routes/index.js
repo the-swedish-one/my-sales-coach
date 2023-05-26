@@ -8,10 +8,10 @@ router.get("/", function (req, res, next) {
 });
 
 // API call to the google cloud api for text to speech via the function saved in texttospeech.js
-router.post("/", function (req, res, next) {
+router.post("/", async function (req, res, next) {
   const { text } = req.body;
-  convertTextToMp3(text);
-  res.send({ message: "mp3 created" });
+  const body = await convertTextToMp3(text);
+  res.send({ message: "mp3 created", body });
 });
 
 module.exports = router;
