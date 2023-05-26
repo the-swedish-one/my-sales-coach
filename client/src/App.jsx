@@ -82,6 +82,19 @@ function App() {
     await processMessageToChatGPT(newMessages);
   }
 
+  // function to turn the audio response (buffer) into a base64 (so it can be used for an audio file)
+  function arrayBufferToBase64(buffer) {
+    var binary = "";
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const result = window.btoa(binary);
+    // console.log(result);
+    return result;
+  }
+
   async function processMessageToChatGPT(chatMessages) {
     // Our chat messages object needs to be translated into the format that the chatGPT api will understand:
     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
@@ -124,7 +137,7 @@ function App() {
         Authorization: "Bearer " + chatGptAPI,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(apiRequestBody), // varibale created above this function
+      body: JSON.stringify(apiRequestBody), // variable created above this function
     });
 
     const data = await response.json();
@@ -141,16 +154,21 @@ function App() {
       body: JSON.stringify({ text: data.choices[0].message.content }),
     });
 
+    const audio = new Audio();
+    const data2 = await audioResponse.json();
+    audio.src = "data:audio/mp3;base64," + arrayBufferToBase64(data2.body.data);
+
     // set the messages with our previous messages plus chatGPT's reply
     setMessages([
       ...chatMessages,
       {
         message: data.choices[0].message.content,
-
         sender: "ChatGPT",
       },
+      { audioURL: audio.src, sender: "ChatGPT" },
     ]);
     setTyping(false); // make the typing dots go away now that chatGPT has responded
+    audio.play();
   }
 
   // buttons for scenarios:
@@ -173,10 +191,13 @@ function App() {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
       </div>
-      <h1>My Sales Coach</h1>
-      <h3>Pick a scenario you want to practice</h3>
-      <button onClick={sellAPen}>Sell a pen</button>
-      <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
+      {/* heading and scenario buttons */}
+      <div>
+        <h1>My Sales Coach</h1>
+        <h3>Pick a scenario you want to practice</h3>
+        <button onClick={sellAPen}>Sell a pen</button>
+        <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
+      </div>
 
       <div>
         {/* <button onClick={SpeechRecognition.startListening}>Record</button> */}
@@ -188,38 +209,34 @@ function App() {
         {/* <p>{transcript}</p> */}
       </div>
 
-      <div>
-        <MessageList
-          style={{ height: "200px", width: "500px" }}
-          scrollBehavior="smooth"
-          typingIndicator={
-            typing ? <TypingIndicator content="ChatGPT is typing" /> : null
-          }
-        >
-          {messages.map((message, i) => {
-            // give each message in the array a message componenet
-            return <Message key={i} model={message} />; // returns imported component Message, model (the message it's looking for) is our current message
-          })}
-        </MessageList>
+      <div
+        style={{ height: "300px", width: "500px" }}
+        // typingIndicator={
+        //   typing ? <TypingIndicator content="ChatGPT is typing" /> : null
+        // }
+      >
+        {messages.map((message, i) => {
+          // give each message in the array a message componenet
+          return (
+            <div key={i}>
+              {message.message}
+              {message.audioURL ? (
+                <audio src={message.audioURL} controls />
+              ) : null}
+            </div>
+          ); // returns imported component Message, model (the message it's looking for) is our current message
+        })}
       </div>
 
       <textarea
         style={{ height: "100px", width: "500px" }}
-        placeholder="Type your message here or use the buttons to record your voice!"
+        placeholder="Type your message here or record your voice!"
         onChange={handleInputChange}
         value={message || transcript}
       />
 
       {/* Microphone icon for starting and stopping the recording */}
       <div>
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 384 512"
-          style={{ height: "50px" }}
-          onClick={SpeechRecognition.startListening}
-        >
-          <path d="M192 0C139 0 96 43 96 96V256c0 53 43 96 96 96s96-43 96-96V96c0-53-43-96-96-96zM64 216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 89.1 66.2 162.7 152 174.4V464H120c-13.3 0-24 10.7-24 24s10.7 24 24 24h72 72c13.3 0 24-10.7 24-24s-10.7-24-24-24H216V430.4c85.8-11.7 152-85.3 152-174.4V216c0-13.3-10.7-24-24-24s-24 10.7-24 24v40c0 70.7-57.3 128-128 128s-128-57.3-128-128V216z" />
-        </svg> */}
         {listening ? (
           <svg
             onClick={SpeechRecognition.stopListening}
@@ -274,7 +291,7 @@ function App() {
           </svg>
         )}
       </div>
-      <p>Microphone: {listening ? "on" : "off"}</p>
+      <p>{listening ? "Recording" : " "}</p>
       <button onClick={handleSend}>Send!</button>
 
       {/* Button to clear the message history so you can start a new chat */}
