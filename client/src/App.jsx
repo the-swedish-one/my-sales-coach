@@ -190,27 +190,25 @@ function App() {
   }
 
   return (
-    <div>
-      {/* <div>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-      </div> */}
-
-      {/* heading and scenario buttons */}
+    <div className="container">
+      {/* Page links */}
       <div>
-        <h1>My Sales Coach</h1>
-        <h3>Pick a scenario you want to practice</h3>
-        <button onClick={sellAPen}>Sell a pen</button>
-        <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
+        {/* <Link to="/">Home</Link>
+        <Link to="/about">About</Link> */}
       </div>
 
-      {/* Display messages */}
-      <div
-        className="mt-5 px-5"
-        // typingIndicator={
-        //   typing ? <TypingIndicator content="ChatGPT is typing" /> : null
-        // }
-      >
+      {/* heading and scenario buttons */}
+      <div className="mt-10 block text-center">
+        <h1 className="mb-5 text-6xl">My Sales Coach</h1>
+        <h3 className="mb-3 text-2xl">Pick a scenario you want to practice</h3>
+        <div>
+          <button onClick={sellAPen}>Sell a pen</button>
+          <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
+        </div>
+      </div>
+
+      {/* Display list of messages */}
+      <div className="mt-5 px-5 flex justify-center h-96 w-96">
         {messages.map((message, i) => {
           return (
             <div
@@ -230,8 +228,10 @@ function App() {
         })}
       </div>
 
+      <p className="px-3 mt-2">{typing ? "ChatGPT is typing..." : null}</p>
+
       <textarea
-        style={{ height: "100px", width: "500px" }}
+        className="mt-5 font-sans h-28 w-96 border-slate-400"
         placeholder="Type your message here or record your voice!"
         onChange={handleInputChange}
         value={message || transcript}
@@ -284,7 +284,9 @@ function App() {
         )}
       </div>
       <p>{listening ? "Recording" : " "}</p>
-      <button onClick={handleSend}>Send!</button>
+      <button onClick={handleSend} className="text-center">
+        Send!
+      </button>
 
       {/* Button to clear the message history so you can start a new chat */}
       <button
