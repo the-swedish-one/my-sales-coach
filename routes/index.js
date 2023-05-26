@@ -7,6 +7,7 @@ router.get("/", function (req, res, next) {
   res.send({ title: "Express" });
 });
 
+// API call to the google cloud api for text to speech via the function saved in texttospeech.js
 router.post("/", function (req, res, next) {
   const { text } = req.body;
   convertTextToMp3(text);
