@@ -19,7 +19,6 @@ import About from "./pages/About";
 
 // import the api key here
 const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
-const googleAPI = import.meta.env.VITE_GOOGLE_API_KEY;
 
 function App() {
   const [typing, setTyping] = useState(false);
@@ -66,23 +65,19 @@ function App() {
     };
 
     const newMessages = [...messages, newMessage]; // create a new array with all the old messages, + the new message
+    console.log(newMessages);
 
     // update messages state
     setMessages(newMessages);
 
-    // set a typing indicator (e.g. ChatGPT is typing)
+    // set a typing indicator (e.g. "ChatGPT is typing")
     setTyping(true);
 
     // clear textarea
     resetTranscript();
     setMessage("");
 
-    const newMessagesFiltered = newMessages.filter(
-      (message) => message.message
-    );
-    // console.log(newMessagesFiltered);
-
-    await processMessageToChatGPT(newMessagesFiltered);
+    await processMessageToChatGPT(newMessages);
   }
 
   // function to turn the audio response (buffer) into a base64 (so it can be used for an audio file)
@@ -99,12 +94,19 @@ function App() {
   }
 
   // large function to process messages to and from chatGPT (with an api call to google texttospeech)
-  async function processMessageToChatGPT(chatMessages) {
+  async function processMessageToChatGPT(newMessages) {
     // Our chat messages object needs to be translated into the format that the chatGPT api will understand:
     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
     // but apiMessages needs to look like this { role: "user" or "assistant", content: "The message content here"}
+    console.log(messages);
 
-    let apiMessages = chatMessages.map((messageObject) => {
+    // filter out any previous audio messages because this makes chatgpt's reply not work after the first one
+    const newMessagesFiltered = newMessages.filter(
+      (message) => message.message
+    );
+    console.log(newMessagesFiltered);
+
+    let apiMessages = newMessagesFiltered.map((messageObject) => {
       // mapping through each chatMessage object and creating a new object to match the object the api is expecting
       let role = "";
       if (messageObject.sender === "ChatGPT") {
@@ -162,7 +164,7 @@ function App() {
 
     // set the messages with our previous messages plus chatGPT's reply
     setMessages([
-      ...messages,
+      ...newMessages,
       {
         message: data.choices[0].message.content,
         sender: "ChatGPT",
@@ -188,11 +190,12 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <div>
+    <div>
+      {/* <div>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
-      </div>
+      </div> */}
+
       {/* heading and scenario buttons */}
       <div>
         <h1>My Sales Coach</h1>
@@ -217,18 +220,6 @@ function App() {
                 (message.sender === "user" && "flex items-end")
               }
             >
-              {/* Sender */}
-              <div className="mt-4">
-                <p
-                  className={
-                    message.sender === "user"
-                      ? "text-right mr-2 italic text-blue-900"
-                      : " text-left ml-2 italic text-purple-900"
-                  }
-                >
-                  {message.sender}
-                </p>
-              </div>
               {/* Messages */}
               {message.message}
               {message.audioURL ? (
@@ -330,10 +321,10 @@ function App() {
       </div> */}
       </div>
 
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-      </Routes>
+      </Routes> */}
     </div>
   );
 }
