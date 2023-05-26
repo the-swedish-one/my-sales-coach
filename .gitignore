@@ -4,3 +4,4 @@
 .env
 .DS_Store
 service_account.json
+output.mp3
