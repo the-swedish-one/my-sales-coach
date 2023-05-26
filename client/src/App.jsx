@@ -59,8 +59,6 @@ function App() {
   }
 
   async function handleSend() {
-    // console.log(import.meta.env.VITE_CHAT_GPT_API_KEY);
-
     const newMessage = {
       message: message || transcript, // this is the text we're getting from the sender
       sender: "user",
@@ -79,7 +77,12 @@ function App() {
     resetTranscript();
     setMessage("");
 
-    await processMessageToChatGPT(newMessages);
+    const newMessagesFiltered = newMessages.filter(
+      (message) => message.message
+    );
+    // console.log(newMessagesFiltered);
+
+    await processMessageToChatGPT(newMessagesFiltered);
   }
 
   // function to turn the audio response (buffer) into a base64 (so it can be used for an audio file)
@@ -95,6 +98,7 @@ function App() {
     return result;
   }
 
+  // large function to process messages to and from chatGPT (with an api call to google texttospeech)
   async function processMessageToChatGPT(chatMessages) {
     // Our chat messages object needs to be translated into the format that the chatGPT api will understand:
     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
@@ -139,9 +143,7 @@ function App() {
       },
       body: JSON.stringify(apiRequestBody), // variable created above this function
     });
-
     const data = await response.json();
-
     // console.log(data);
     // console.log(data.choices[0].message.content); // <<<  This is chatGPT's message back!
 
@@ -160,7 +162,7 @@ function App() {
 
     // set the messages with our previous messages plus chatGPT's reply
     setMessages([
-      ...chatMessages,
+      ...messages,
       {
         message: data.choices[0].message.content,
         sender: "ChatGPT",
@@ -168,7 +170,7 @@ function App() {
       { audioURL: audio.src, sender: "ChatGPT" },
     ]);
     setTyping(false); // make the typing dots go away now that chatGPT has responded
-    audio.play();
+    audio.play(); // make the audio autoplay on reply
   }
 
   // buttons for scenarios:
@@ -186,7 +188,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="container">
       <div>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
@@ -199,26 +201,35 @@ function App() {
         <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
       </div>
 
-      <div>
-        {/* <button onClick={SpeechRecognition.startListening}>Record</button> */}
-        {/* <button onClick={SpeechRecognition.stopListening}>
-          Stop recording
-        </button> */}
-        {/* <button onClick={resetTranscript}>Reset recording</button> */}
-
-        {/* <p>{transcript}</p> */}
-      </div>
-
+      {/* Display messages */}
       <div
-        style={{ height: "300px", width: "500px" }}
+        className="mt-5 px-5"
         // typingIndicator={
         //   typing ? <TypingIndicator content="ChatGPT is typing" /> : null
         // }
       >
         {messages.map((message, i) => {
-          // give each message in the array a message componenet
           return (
-            <div key={i}>
+            <div
+              key={i}
+              className={
+                "flex flex-col" +
+                (message.sender === "user" && "flex items-end")
+              }
+            >
+              {/* Sender */}
+              <div className="mt-4">
+                <p
+                  className={
+                    message.sender === "user"
+                      ? "text-right mr-2 italic text-blue-900"
+                      : " text-left ml-2 italic text-purple-900"
+                  }
+                >
+                  {message.sender}
+                </p>
+              </div>
+              {/* Messages */}
               {message.message}
               {message.audioURL ? (
                 <audio src={message.audioURL} controls />
@@ -240,9 +251,8 @@ function App() {
         {listening ? (
           <svg
             onClick={SpeechRecognition.stopListening}
-            style={{ height: "50px" }}
+            style={{ height: "50px", cursor: "pointer" }}
             xmlns="http://www.w3.org/2000/svg"
-            // xmlns:xlink="http://www.w3.org/1999/xlink"
             width="1080"
             zoomAndPan="magnify"
             viewBox="0 0 810 809.999993"
@@ -253,14 +263,10 @@ function App() {
             <path
               fill="#e80303"
               d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-              // fill-opacity="1"
-              // fill-rule="nonzero"
             />
             <path
               fill="#e80303"
               d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-              // fill-opacity="1"
-              // fill-rule="nonzero"
             />
           </svg>
         ) : (
@@ -268,7 +274,6 @@ function App() {
             onClick={SpeechRecognition.startListening}
             style={{ height: "50px" }}
             xmlns="http://www.w3.org/2000/svg"
-            // xmlns:xlink="http://www.w3.org/1999/xlink"
             width="1080"
             zoomAndPan="magnify"
             viewBox="0 0 810 809.999993"
@@ -279,14 +284,10 @@ function App() {
             <path
               fill="#000000"
               d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-              // fill-opacity="1"
-              // fill-rule="nonzero"
             />
             <path
               fill="#000000"
               d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-              // fill-opacity="1"
-              // fill-rule="nonzero"
             />
           </svg>
         )}
