@@ -25,7 +25,8 @@ async function convertTextToMp3(text) {
 
   await writeFile("output.mp3", response.audioContent, "binary");
 
-  console.log("text to speech has completed");
+  // console.log("text to speech has completed");
+  return response.audioContent;
 }
 
 // convertTextToMp3();
