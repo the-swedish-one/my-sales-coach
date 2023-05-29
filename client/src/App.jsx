@@ -48,7 +48,7 @@ function App() {
 
   function handleInputChange(event) {
     // console.log(transcript);
-    if (!transcript === "" && event) {
+    if (transcript !== "" && event) {
       setMessage(event.target.value);
     } else if (!transcript === "") {
       setMessage(transcript);
@@ -207,21 +207,23 @@ function App() {
         </div>
       </div>
 
+      {transcript}
+
       {/* Display list of messages */}
-      <div className="mt-5 px-5 flex justify-center h-96 w-96">
+      <div className="mt-5 px-5 h-96 w-96">
         {messages.map((message, i) => {
           return (
-            <div
-              key={i}
-              className={
-                "block" +
-                (message.sender === "user"
-                  ? "flex items-end"
-                  : "flex items-start")
-              }
-            >
+            <div key={i}>
               {/* Messages */}
-              {message.message}
+              <div
+                className={
+                  message.sender === "user"
+                    ? "text-right mb-4"
+                    : "text-left mb-4"
+                }
+              >
+                {message.message}
+              </div>
               {message.audioURL ? (
                 <audio src={message.audioURL} controls />
               ) : null}
@@ -233,7 +235,7 @@ function App() {
       <p className="px-3 mt-2">{typing ? "ChatGPT is typing..." : null}</p>
 
       <textarea
-        className="mt-5 font-sans h-28 w-96 border-slate-400"
+        className="mt-5 font-sans h-28 w-96"
         placeholder="Type your message here or record your voice!"
         onChange={handleInputChange}
         value={message || transcript}
@@ -286,9 +288,11 @@ function App() {
         )}
       </div>
       <p className="text-xs">{listening ? "Recording" : " "}</p>
-      <button onClick={handleSend} className="text-center flex justify-center">
+      <button onClick={handleSend} className="text-center">
         Send!
       </button>
+      <button onClick={SpeechRecognition.startListening}>Start</button>
+      <button onClick={SpeechRecognition.stopListening}>Stop</button>
 
       {/* Button to clear the message history so you can start a new chat */}
       <button
