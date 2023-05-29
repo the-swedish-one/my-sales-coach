@@ -47,10 +47,11 @@ function App() {
   }, [transcript]);
 
   function handleInputChange(event) {
-    // console.log(transcript);
+    console.log(transcript);
     if (transcript !== "" && event) {
       setMessage(event.target.value);
-    } else if (!transcript === "") {
+    } else if (transcript !== "") {
+      console.log("here");
       setMessage(transcript);
     } else {
       setMessage(event?.target.value);
@@ -98,13 +99,13 @@ function App() {
     // Our chat messages object needs to be translated into the format that the chatGPT api will understand:
     // chatMessages looks like this { sender: "user" or "ChatGPT", message: "The message content here"}
     // but apiMessages needs to look like this { role: "user" or "assistant", content: "The message content here"}
-    console.log(messages);
+    // console.log(messages);
 
     // filter out any previous audio messages because this makes chatgpt's reply not work after the first one
     const newMessagesFiltered = newMessages.filter(
       (message) => message.message
     );
-    console.log(newMessagesFiltered);
+    // console.log(newMessagesFiltered);
 
     let apiMessages = newMessagesFiltered.map((messageObject) => {
       // mapping through each chatMessage object and creating a new object to match the object the api is expecting
@@ -207,7 +208,7 @@ function App() {
         </div>
       </div>
 
-      {transcript}
+      <div>{transcript}</div>
 
       {/* Display list of messages */}
       <div className="mt-5 px-5 h-96 w-96">
@@ -242,7 +243,7 @@ function App() {
       />
 
       {/* Microphone icon for starting and stopping the recording */}
-      <div>
+      <div className="">
         {listening ? (
           <svg
             className="h-10 cursor-pointer"
