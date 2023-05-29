@@ -31,8 +31,6 @@ textarea {
   border-color: #c7e3fa;
   border: 1px solid;
   border-radius: 5px;
-  display: flex;
-  justify-content: center;
 }
 
 button {
