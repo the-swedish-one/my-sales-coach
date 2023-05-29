@@ -246,12 +246,12 @@ function App() {
             onChange={handleInputChange}
             value={message || transcript}
           />
-          <div>
+          <div className="flex flex-col h-28 justify-between">
             {/* Microphone icon for starting and stopping the recording */}
-            <div className="flex">
+            <div className="flex justify-center mt-1">
               {listening ? (
                 <svg
-                  className="h-10 w-10 cursor-pointer"
+                  className="h-11 w-11 cursor-pointer"
                   onClick={SpeechRecognition.stopListening}
                   xmlns="http://www.w3.org/2000/svg"
                   width="1080"
@@ -272,7 +272,7 @@ function App() {
                 </svg>
               ) : (
                 <svg
-                  className="h-10 w-10 cursor-pointer"
+                  className="h-11 w-11 cursor-pointer "
                   onClick={SpeechRecognition.startListening}
                   xmlns="http://www.w3.org/2000/svg"
                   width="1080"
@@ -293,15 +293,16 @@ function App() {
                 </svg>
               )}
             </div>
-            <p className="text-xs">{listening ? "Recording" : " "}</p>
-            <button onClick={handleSend} className=" text-center mx-2 h-11">
+
+            {listening && (
+              <p className="text-xs flex justify-center">Recording</p>
+            )}
+            <button onClick={handleSend} className="text-center mx-2 h-11">
               Send!
             </button>
           </div>
         </div>
       </div>
-
-      <div></div>
 
       <div className="flex justify-center mt-2">
         {/* Button to clear the message history so you can start a new chat */}
