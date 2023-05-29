@@ -179,7 +179,7 @@ function App() {
   // buttons for scenarios:
   function sellAPen() {
     setSystemMessageContent(
-      "Respond to me like you want to buy a pen from me. Agree to the sale only once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell but don't prompt me with your needs or which pen you would like to."
+      "You want to buy a pen from me but you will only agree to buy the pen once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell. Don't prompt me with your needs or tell me which pen you would like to buy."
     );
     // console.log(systemMessageContent);
   }
@@ -191,7 +191,7 @@ function App() {
   }
 
   return (
-    <div className="container">
+    <div className="flex flex-col container">
       {/* Page links */}
       <div>
         {/* <Link to="/">Home</Link>
@@ -203,107 +203,117 @@ function App() {
         <h1 className="mb-5 text-6xl">My Sales Coach</h1>
         <h3 className="mb-3 text-2xl">Pick a scenario you want to practice</h3>
         <div>
-          <button onClick={sellAPen}>Sell a pen</button>
+          <button className="mr-2" onClick={sellAPen}>
+            Sell a pen
+          </button>
           <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
         </div>
       </div>
 
       <div>{transcript}</div>
 
-      {/* Display list of messages */}
-      <div className="mt-5 px-5 h-96 w-96">
-        {messages.map((message, i) => {
-          return (
-            <div key={i}>
-              {/* Messages */}
-              <div
-                className={
-                  message.sender === "user"
-                    ? "text-right mb-4"
-                    : "text-left mb-4"
-                }
-              >
-                {message.message}
+      <div className="mx-auto ">
+        {/* Display list of messages */}
+        <div className="mt-5 px-5 py-2 h-96 w-96 border rounded border-slate-300	overflow-y-auto overscroll-contain scroll-smooth">
+          {messages.map((message, i) => {
+            return (
+              <div key={i}>
+                {/* Messages */}
+                <p
+                  className={
+                    message.sender === "user"
+                      ? "text-right my-2"
+                      : "text-left my-2"
+                  }
+                >
+                  {message.message}
+                </p>
+                {message.audioURL ? (
+                  <audio src={message.audioURL} controls className="mb-4" />
+                ) : null}
               </div>
-              {message.audioURL ? (
-                <audio src={message.audioURL} controls />
-              ) : null}
+            );
+          })}
+          <p className="px-3 mt-2 text-xs">
+            {typing ? "ChatGPT is typing..." : null}
+          </p>
+        </div>
+
+        <div className="flex items-end">
+          <textarea
+            className="mt-5 p-2 font-sans h-28 w-72 border rounded border-slate-300	"
+            placeholder="Type your message here!"
+            onChange={handleInputChange}
+            value={message || transcript}
+          />
+          <div>
+            {/* Microphone icon for starting and stopping the recording */}
+            <div className="flex">
+              {listening ? (
+                <svg
+                  className="h-10 w-10 cursor-pointer"
+                  onClick={SpeechRecognition.stopListening}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1080"
+                  zoomAndPan="magnify"
+                  viewBox="0 0 810 809.999993"
+                  height="1080"
+                  preserveAspectRatio="xMidYMid meet"
+                  version="1.0"
+                >
+                  <path
+                    fill="#e80303"
+                    d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
+                  />
+                  <path
+                    fill="#e80303"
+                    d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="h-10 w-10 cursor-pointer"
+                  onClick={SpeechRecognition.startListening}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1080"
+                  zoomAndPan="magnify"
+                  viewBox="0 0 810 809.999993"
+                  height="1080"
+                  preserveAspectRatio="xMidYMid meet"
+                  version="1.0"
+                >
+                  <path
+                    fill="#000000"
+                    d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
+                  />
+                  <path
+                    fill="#000000"
+                    d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
+                  />
+                </svg>
+              )}
             </div>
-          );
-        })}
+            <p className="text-xs">{listening ? "Recording" : " "}</p>
+            <button onClick={handleSend} className=" text-center mx-2 h-11">
+              Send!
+            </button>
+          </div>
+        </div>
       </div>
 
-      <p className="px-3 mt-2">{typing ? "ChatGPT is typing..." : null}</p>
+      <div></div>
 
-      <textarea
-        className="mt-5 font-sans h-28 w-96"
-        placeholder="Type your message here or record your voice!"
-        onChange={handleInputChange}
-        value={message || transcript}
-      />
-
-      {/* Microphone icon for starting and stopping the recording */}
-      <div className="">
-        {listening ? (
-          <svg
-            className="h-10 cursor-pointer"
-            onClick={SpeechRecognition.stopListening}
-            xmlns="http://www.w3.org/2000/svg"
-            width="1080"
-            zoomAndPan="magnify"
-            viewBox="0 0 810 809.999993"
-            height="1080"
-            preserveAspectRatio="xMidYMid meet"
-            version="1.0"
-          >
-            <path
-              fill="#e80303"
-              d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-            />
-            <path
-              fill="#e80303"
-              d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-            />
-          </svg>
-        ) : (
-          <svg
-            className="h-10 cursor-pointer"
-            onClick={SpeechRecognition.startListening}
-            xmlns="http://www.w3.org/2000/svg"
-            width="1080"
-            zoomAndPan="magnify"
-            viewBox="0 0 810 809.999993"
-            height="1080"
-            preserveAspectRatio="xMidYMid meet"
-            version="1.0"
-          >
-            <path
-              fill="#000000"
-              d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-            />
-            <path
-              fill="#000000"
-              d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-            />
-          </svg>
-        )}
+      <div className="flex justify-center mt-2">
+        {/* Button to clear the message history so you can start a new chat */}
+        <button
+          onClick={() =>
+            setMessages([{ message: "Hi there!", sender: "ChatGPT" }])
+          }
+          className="mb-10"
+        >
+          New chat
+        </button>
       </div>
-      <p className="text-xs">{listening ? "Recording" : " "}</p>
-      <button onClick={handleSend} className="text-center">
-        Send!
-      </button>
-      <button onClick={SpeechRecognition.startListening}>Start</button>
-      <button onClick={SpeechRecognition.stopListening}>Stop</button>
-
-      {/* Button to clear the message history so you can start a new chat */}
-      <button
-        onClick={() =>
-          setMessages([{ message: "Hi there!", sender: "ChatGPT" }])
-        }
-        className="mb-10"
-      >
-        New chat
-      </button>
 
       {/* div containing commented out code for chatgpt components */}
       <div>
