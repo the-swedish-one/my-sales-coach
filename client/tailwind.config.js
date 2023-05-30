@@ -5,7 +5,20 @@ export default {
     container: {
       center: true,
     },
-    extend: {},
+    extend: {
+      colors: {
+        "light-ivory": "#F6F4F3",
+        ivory: "#F4EAE6",
+        teal: "#4297A0",
+        coral: "#E57F84",
+        grey: "#2F5061",
+        "light-blue": "#76D3FB",
+        "dark-blue": "#3F5896",
+        "dark-grey": "#2E2E2E",
+        mustard: "#FFCC66",
+        "pres-coral": "#FA8068",
+      },
+    },
   },
   plugins: [],
 };
