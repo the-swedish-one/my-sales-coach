@@ -3,8 +3,8 @@
 export const ThreeDots = () => {
   return (
     <svg
-      width="120"
-      height="30"
+      width="30"
+      height="10"
       viewBox="0 0 120 30"
       xmlns="http://www.w3.org/2000/svg"
       fill="#2E2E2E"
