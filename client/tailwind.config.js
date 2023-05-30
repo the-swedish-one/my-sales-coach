@@ -7,6 +7,7 @@ export default {
     },
     extend: {
       colors: {
+        "off-white": "#f5f5f5",
         "light-ivory": "#F6F4F3",
         ivory: "#F4EAE6",
         teal: "#4297A0",
