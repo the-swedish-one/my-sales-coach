@@ -26,12 +26,17 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
   border-color: #4297a0;
+}
+
+#sendButton {
+  min-width: 84px;
+  display: flex;
+  justify-content: center;
 }
 
 @media (prefers-color-scheme: light) {
