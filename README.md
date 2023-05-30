@@ -16,7 +16,7 @@ This app helps you practice your sales skills in different pre-set scenarios.
 You will need 2 of your own API keys for this code to run:
 
 - Chat GPT API - You can [create your own profile](https://openai.com/blog/openai-api) and grab your API KEY And put it into a _front-end_ .env file.
-- Google Cloud Text to Speech API - For this one you will need a [Google Cloud Developers account](https://cloud.google.com/) and then you will need to enable the Text to Speech API and make a service account for your project. Use this [tutorial](https://www.youtube.com/watch?v=HSuwhalBGx0) and just follow the instructions for adding the service account details to a service*account.json file and linking it with your \_back-end* .env file.
+- Google Cloud Text to Speech API - For this one you will need a [Google Cloud Developers account](https://cloud.google.com/) and then you will need to enable the Text to Speech API and make a service account for your project. Use this [tutorial](https://www.youtube.com/watch?v=HSuwhalBGx0) and just follow the instructions for adding the service account details to a service_account.json file and linking it with your _back-end_ .env file.
 
 _Note_: Don't forget to gitignore both your .env files and your service_account.json before pushing to github so that you don't share your G Cloud service account details!
 
