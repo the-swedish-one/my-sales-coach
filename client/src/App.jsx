@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
@@ -205,6 +205,16 @@ function App() {
     setSelectButton("");
   }
 
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className="flex flex-col container">
       {/* Page links */}
@@ -273,11 +283,12 @@ function App() {
           <div className="px-3 mt-2 text-xs text-dark-grey">
             {typing && <ThreeDots />}
           </div>
+          <div ref={messagesEndRef}></div>
         </div>
 
         <div className="flex items-end">
           <textarea
-            className="mt-5 p-2 text-dark-grey font-sans h-28 w-72 border rounded border-slate-300"
+            className="mt-5 p-2 text-dark-grey bg-off-white font-sans h-28 w-72 border rounded border-slate-300"
             placeholder="Type your message here or record your voice!"
             onChange={handleInputChange}
             value={message || transcript}
