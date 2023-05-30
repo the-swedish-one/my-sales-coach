@@ -14,13 +14,19 @@ import "regenerator-runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import Home from "./pages/Home";
-import About from "./pages/About";
+import { ThreeDots } from "./assets/three-dots";
+import { SpinningCircles } from "./assets/spinning-circles";
+import { MicRed } from "./assets/mic-red";
+import { MicBlack } from "./assets/mic-black";
+import { TitleImage } from "./assets/title-img";
+// import Home from "./pages/Home";
+// import About from "./pages/About";
 
 // import the api key here
 const chatGptAPI = import.meta.env.VITE_CHAT_GPT_API_KEY;
 
 function App() {
+  const [selectButton, setSelectButton] = useState("");
   const [typing, setTyping] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
@@ -47,7 +53,7 @@ function App() {
   }, [transcript]);
 
   function handleInputChange(event) {
-    console.log(transcript);
+    // console.log(transcript);
     if (transcript !== "" && event) {
       setMessage(event.target.value);
     } else if (transcript !== "") {
@@ -66,7 +72,7 @@ function App() {
     };
 
     const newMessages = [...messages, newMessage]; // create a new array with all the old messages, + the new message
-    console.log(newMessages);
+    // console.log(newMessages);
 
     // update messages state
     setMessages(newMessages);
@@ -148,7 +154,7 @@ function App() {
     });
     const data = await response.json();
     // console.log(data);
-    // console.log(data.choices[0].message.content); // <<<  This is chatGPT's message back!
+    console.log(data.choices[0].message.content); // <<<  This is chatGPT's message back!
 
     // send chatgpt's text response to the googlecloud text-to-voice api via the backend call to googlecloud
     const audioResponse = await fetch("/api", {
@@ -158,6 +164,8 @@ function App() {
       },
       body: JSON.stringify({ text: data.choices[0].message.content }),
     });
+
+    console.log(audioResponse);
 
     const audio = new Audio();
     const data2 = await audioResponse.json();
@@ -181,6 +189,7 @@ function App() {
     setSystemMessageContent(
       "You want to buy a pen from me but you will only agree to buy the pen once I've identified your needs for a pen and matched your needs to the benefits of one of the pens that I sell. Don't prompt me with your needs or tell me which pen you would like to buy."
     );
+    setSelectButton("sellAPen");
     // console.log(systemMessageContent);
   }
 
@@ -188,6 +197,12 @@ function App() {
     setSystemMessageContent(
       "Respond to me like you are the CEO of a major tech company and I am reaching out to you without any previous communication."
     );
+    setSelectButton("prospectToTheCEO");
+  }
+
+  function newChat() {
+    setMessages([{ message: "Hi there!", sender: "ChatGPT" }]);
+    setSelectButton("");
   }
 
   return (
@@ -198,19 +213,40 @@ function App() {
         <Link to="/about">About</Link> */}
       </div>
 
-      {/* heading and scenario buttons */}
+      {/* Heading and scenario buttons */}
       <div className="mt-10 block text-center">
-        <h1 className="mb-5 text-6xl">My Sales Coach</h1>
-        <h3 className="mb-3 text-2xl">Pick a scenario you want to practice</h3>
+        <h1 className="mb-5 text-6xl text-dark-grey">My Sales Coach</h1>
+        {/* <div>
+          <TitleImage />
+        </div> */}
+        <h3 className="mb-3 text-2xl text-dark-grey">
+          Pick a scenario you want to practice
+        </h3>
         <div>
-          <button className="mr-2" onClick={sellAPen}>
+          <button
+            className={
+              selectButton === "sellAPen"
+                ? "mr-2 bg-teal text-white border-ivory"
+                : "mr-2 text-dark-grey border-dark-grey"
+            }
+            onClick={sellAPen}
+          >
             Sell a pen
           </button>
-          <button onClick={prospectToTheCEO}>Prospect to the CEO</button>
+          <button
+            onClick={prospectToTheCEO}
+            className={
+              selectButton === "prospectToTheCEO"
+                ? "bg-teal text-white border-ivory"
+                : "text-dark-grey border-dark-grey"
+            }
+          >
+            Prospect to the CEO
+          </button>
         </div>
       </div>
-
-      <div>{transcript}</div>
+      {/* 
+      <div>{transcript}</div> */}
 
       <div className="mx-auto ">
         {/* Display list of messages */}
@@ -222,27 +258,27 @@ function App() {
                 <p
                   className={
                     message.sender === "user"
-                      ? "text-right my-2"
-                      : "text-left my-2"
+                      ? "text-right text-dark-grey my-2"
+                      : "text-left text-dark-grey my-2"
                   }
                 >
                   {message.message}
                 </p>
-                {message.audioURL ? (
+                {message.audioURL && (
                   <audio src={message.audioURL} controls className="mb-4" />
-                ) : null}
+                )}
               </div>
             );
           })}
-          <p className="px-3 mt-2 text-xs">
-            {typing ? "ChatGPT is typing..." : null}
-          </p>
+          <div className="px-3 mt-2 text-xs text-dark-grey">
+            {typing && <ThreeDots />}
+          </div>
         </div>
 
         <div className="flex items-end">
           <textarea
-            className="mt-5 p-2 font-sans h-28 w-72 border rounded border-slate-300	"
-            placeholder="Type your message here!"
+            className="mt-5 p-2 text-dark-grey font-sans h-28 w-72 border rounded border-slate-300"
+            placeholder="Type your message here or record your voice!"
             onChange={handleInputChange}
             value={message || transcript}
           />
@@ -250,55 +286,30 @@ function App() {
             {/* Microphone icon for starting and stopping the recording */}
             <div className="flex justify-center mt-1">
               {listening ? (
-                <svg
-                  className="h-11 w-11 cursor-pointer"
-                  onClick={SpeechRecognition.stopListening}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="1080"
-                  zoomAndPan="magnify"
-                  viewBox="0 0 810 809.999993"
-                  height="1080"
-                  preserveAspectRatio="xMidYMid meet"
-                  version="1.0"
-                >
-                  <path
-                    fill="#e80303"
-                    d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-                  />
-                  <path
-                    fill="#e80303"
-                    d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-                  />
-                </svg>
+                <div onClick={SpeechRecognition.stopListening}>
+                  <MicRed />
+                </div>
               ) : (
-                <svg
-                  className="h-11 w-11 cursor-pointer "
-                  onClick={SpeechRecognition.startListening}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="1080"
-                  zoomAndPan="magnify"
-                  viewBox="0 0 810 809.999993"
-                  height="1080"
-                  preserveAspectRatio="xMidYMid meet"
-                  version="1.0"
-                >
-                  <path
-                    fill="#000000"
-                    d="M 404.859375 436.980469 C 438.515625 436.980469 465.890625 409.75 465.890625 376.089844 L 465.890625 249.5625 C 465.890625 215.90625 438.515625 188.535156 404.859375 188.535156 C 371.203125 188.535156 343.96875 215.90625 343.96875 249.5625 L 343.96875 376.089844 C 343.96875 409.609375 371.203125 436.980469 404.859375 436.980469 Z M 404.859375 436.980469 "
-                  />
-                  <path
-                    fill="#000000"
-                    d="M 405 0 C 181.273438 0 0 181.273438 0 405 C 0 628.726562 181.273438 810 405 810 C 628.726562 810 810 628.726562 810 405 C 810 181.273438 628.726562 0 405 0 Z M 302.074219 249.5625 C 302.074219 192.722656 348.160156 146.636719 404.859375 146.636719 C 461.558594 146.636719 507.785156 192.863281 507.785156 249.5625 L 507.785156 376.089844 C 507.785156 432.792969 461.558594 478.878906 404.859375 478.878906 C 348.160156 478.878906 302.074219 432.792969 302.074219 376.089844 Z M 425.808594 530.132812 L 425.808594 621.464844 L 473.429688 621.464844 C 485.023438 621.464844 494.378906 630.824219 494.378906 642.414062 C 494.378906 654.003906 485.023438 663.363281 473.429688 663.363281 L 336.429688 663.363281 C 324.839844 663.363281 315.480469 654.003906 315.480469 642.414062 C 315.480469 630.824219 324.839844 621.464844 336.429688 621.464844 L 383.910156 621.464844 L 383.910156 530.132812 C 308.078125 519.796875 249.5625 454.855469 249.5625 376.089844 C 249.5625 364.5 258.921875 355.144531 270.511719 355.144531 C 282.101562 355.144531 291.460938 364.5 291.460938 376.089844 C 291.460938 438.796875 342.292969 489.769531 404.859375 489.769531 C 467.425781 489.769531 518.539062 438.796875 518.539062 376.089844 C 518.539062 364.5 527.894531 355.144531 539.488281 355.144531 C 551.078125 355.144531 560.4375 364.5 560.4375 376.089844 C 560.4375 454.71875 501.640625 519.796875 425.808594 530.132812 Z M 425.808594 530.132812 "
-                  />
-                </svg>
+                <div onClick={SpeechRecognition.startListening}>
+                  <MicBlack />
+                </div>
               )}
             </div>
 
             {listening && (
-              <p className="text-xs flex justify-center">Recording</p>
+              <p className="text-xs text-dark-grey animate-pulse flex justify-center">
+                Recording
+              </p>
             )}
-            <button onClick={handleSend} className="text-center mx-2 h-11">
-              Send!
+            <button
+              onClick={handleSend}
+              className={
+                typing
+                  ? "text-center mx-2 h-11 min-w-84px text-white bg-teal"
+                  : "text-center mx-2 h-11 min-w-84px text-white bg-teal border-transparent hover:border-grey"
+              }
+            >
+              {typing ? <SpinningCircles /> : "Send!"}
             </button>
           </div>
         </div>
@@ -307,10 +318,8 @@ function App() {
       <div className="flex justify-center mt-2">
         {/* Button to clear the message history so you can start a new chat */}
         <button
-          onClick={() =>
-            setMessages([{ message: "Hi there!", sender: "ChatGPT" }])
-          }
-          className="mb-10"
+          onClick={newChat}
+          className="mb-10 h-11 text-slate-500 border-slate-300"
         >
           New chat
         </button>
