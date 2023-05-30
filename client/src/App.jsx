@@ -303,10 +303,11 @@ function App() {
             )}
             <button
               onClick={handleSend}
+              id="sendButton"
               className={
                 typing
-                  ? "text-center mx-2 h-11 min-w-84px text-white bg-teal"
-                  : "text-center mx-2 h-11 min-w-84px text-white bg-teal border-transparent hover:border-grey"
+                  ? "text-center mx-2 h-11 text-white bg-teal"
+                  : "text-center mx-2 h-11 text-white bg-teal border-transparent hover:border-grey"
               }
             >
               {typing ? <SpinningCircles /> : "Send!"}
